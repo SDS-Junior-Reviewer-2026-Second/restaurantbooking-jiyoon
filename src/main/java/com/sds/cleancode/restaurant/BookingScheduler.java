@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class BookingScheduler {
+public class BookingScheduler {
     private int capacityPerHour;
     private List<Schedule> schedules;
     private SmsSender smsSender;
