@@ -1,6 +1,7 @@
 package com.sds.cleancode.restaurant;
 
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -20,8 +21,15 @@ public class BookingSchedulerTest {
     public static final int CAPACITY_PER_HOUR = 3;
 
     BookingScheduler bookingScheduler;
+    TestableSmsSender testableSmsSender = new TestableSmsSender();
+
     public BookingSchedulerTest() {
         bookingScheduler = new BookingScheduler(CAPACITY_PER_HOUR);
+    }
+
+    @BeforeEach
+    void setUp() {
+        bookingScheduler.setSmsSender(testableSmsSender);
     }
 
     @Test
@@ -78,6 +86,12 @@ public class BookingSchedulerTest {
 
     @Test
     public void 예약완료시_SMS는_무조건_발송() {
+        //arrange
+        Schedule schedule = new Schedule(ON_THE_HOUR, UNDER_CAPACITY, CUSTOMER);
+        //act
+        bookingScheduler.addSchedule(schedule);
+        //assert
+        assertThat(testableSmsSender.isSendMethodIsCalled()).isEqualTo(true);
     }
 
     @Test
