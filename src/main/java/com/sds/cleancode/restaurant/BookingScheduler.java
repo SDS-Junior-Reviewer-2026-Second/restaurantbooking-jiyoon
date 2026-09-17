@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BookingScheduler {
+public abstract class BookingScheduler {
     private int capacityPerHour;
     private List<Schedule> schedules;
     private SmsSender smsSender;
@@ -37,13 +37,11 @@ public class BookingScheduler {
         }
 			
 
-		/*
 		// 일요일에는 시스템을 오픈하지 않는다.
-		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime now = getNow();
 		if(now.getDayOfWeek() == DayOfWeek.SUNDAY){
 			throw new RuntimeException("Booking system is not available on sunday");
 		}
-		*/
 
         schedules.add(schedule);
 
@@ -53,6 +51,10 @@ public class BookingScheduler {
         if (schedule.getCustomer().getEmail() != null) {
             mailSender.sendMail(schedule);
         }
+    }
+
+    public LocalDateTime getNow() {
+        return LocalDateTime.now();
     }
 
     public boolean hasSchedule(Schedule schedule) {
@@ -66,4 +68,5 @@ public class BookingScheduler {
     public void setMailSender(MailSender mailSender) {
         this.mailSender = mailSender;
     }
+
 }
