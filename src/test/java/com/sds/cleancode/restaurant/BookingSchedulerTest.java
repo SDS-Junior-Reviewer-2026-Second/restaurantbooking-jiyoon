@@ -8,6 +8,7 @@ import java.time.format.DateTimeFormatter;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class BookingSchedulerTest {
 
@@ -47,10 +48,32 @@ public class BookingSchedulerTest {
 
     @Test
     public void 시간대별_인원제한이_있다_같은_시간대에_Capacity_초과할_경우_예외발생() {
+        //arrange
+        Schedule schedule = new Schedule(ON_THE_HOUR, CAPACITY_PER_HOUR, CUSTOMER);
+        bookingScheduler.addSchedule(schedule);
+        //act
+        try {
+            Schedule newSchedule = new Schedule(ON_THE_HOUR, UNDER_CAPACITY, CUSTOMER);
+            bookingScheduler.addSchedule(newSchedule);
+            fail();
+        }
+        catch (RuntimeException e) {
+            //assert
+            assertThat(e.getMessage()).isEqualTo("Number of people is over restaurant capacity per hour");
+        }
     }
 
     @Test
-    public void 시간대별_인원제한이_있다_같은_시간대가_다르면_Capacity_차있어도_스케쥴_추가_성공() {
+    public void 시간대별_인원제한이_있다_같은_시간대가_다르면_Capacity_차있어도_스케줄_추가_성공() {
+        //arrange
+        Schedule schedule = new Schedule(ON_THE_HOUR, CAPACITY_PER_HOUR, CUSTOMER);
+        bookingScheduler.addSchedule(schedule);
+        //act
+        LocalDateTime differentHour = ON_THE_HOUR.plusHours(1);
+        Schedule newSchedule = new Schedule(differentHour, UNDER_CAPACITY, CUSTOMER);
+        bookingScheduler.addSchedule(newSchedule);
+        //assert
+        assertThat(bookingScheduler.hasSchedule(schedule)).isEqualTo(true);
     }
 
     @Test
